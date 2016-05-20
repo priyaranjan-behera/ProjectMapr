@@ -117,6 +117,54 @@ public class MapRDBTabularClient {
 	    
 	}
 	
+	public static void getAllDataFromTable(String tableName)
+	{
+		// Reads the configurations from the conf folder as mentioned in the classpath. 
+	    Configuration config = HBaseConfiguration.create();
+	    
+	    //From the configuration we create a connection to the cluster. 
+	    try {
+			Connection connection = ConnectionFactory.createConnection(config);
+			Table table = connection.getTable(TableName.valueOf("/tmp/java_table"));
+			
+			try {
+				
+				Scan s = new Scan();
+		        s.addColumn(Bytes.toBytes("column_family"), Bytes.toBytes("column1"));
+		        ResultScanner scanner = table.getScanner(s);
+		        
+		        try {
+		            // Scanners return Result instances.
+		            for (Result rr : scanner) {
+		              System.out.println("Found row: " + rr);
+		            }
+		          } finally {
+		            // Make sure you close your scanners when you are done!
+		            // Thats why we have it inside a try/finally clause
+		            scanner.close();
+		          }
+				
+				byte[] value = r.getValue(Bytes.toBytes("column family"),
+				          Bytes.toBytes("column1"));
+				
+				System.out.println("Value retrieved is: " + Bytes.toString(value));
+				
+			} catch (Exception e)
+			{
+				System.out.println("Error while reading from table: " + e.getMessage());
+				e.printStackTrace();
+			}finally {
+				connection.close();
+		    }
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Couldn't connect to the cluster: " + e.getMessage());
+			e.printStackTrace();
+		}
+	    
+	}
+	
 	
   @SuppressWarnings("deprecation")
 public static void main(String[] args) throws IOException {
@@ -131,7 +179,7 @@ public static void main(String[] args) throws IOException {
     try {
 
     	//createTable("/tmp/java_table");
-    	addDataToTable("/tmp/java_table");
+    	getAllDataFromTable("/tmp/java_table");
     	
     	//getDataFromTable("/tmp/java_table");
     	/*
