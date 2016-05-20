@@ -17,7 +17,35 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 
-public class MyLittleHBaseClient {
+public class MapRDBTabularClient {
+	
+	public void createTable(String tableName)
+	{
+		try{
+
+			// Reads the configurations from the conf folder as mentioned in the classpath. 
+			Configuration config = HBaseConfiguration.create();
+			
+			// Lets create a HBaseAdmin here from the config
+			HBaseAdmin admin = new HBaseAdmin(config);
+			
+			//creating table descriptor
+			HTableDescriptor table = new HTableDescriptor(Bytes.toBytes("/tmp/java_table"));
+	    	
+	    	//creating column family descriptor
+	    	HColumnDescriptor family = new HColumnDescriptor(Bytes.toBytes("column family"));
+	
+	    	//adding column family to HTable
+	    	table.addFamily(family);
+	    	
+	    	admin.createTable(table);
+	    	
+		}catch(Exception e)
+		{
+			System.out.println("Error while creating table: " + e.getMessage());
+		}
+		
+	}
   @SuppressWarnings("deprecation")
 public static void main(String[] args) throws IOException {
     // Reads the configurations from the conf folder as mentioned in the classpath. 
