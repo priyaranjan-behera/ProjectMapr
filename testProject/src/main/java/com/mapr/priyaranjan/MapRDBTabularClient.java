@@ -144,10 +144,6 @@ public class MapRDBTabularClient {
 		            scanner.close();
 		          }
 				
-				byte[] value = r.getValue(Bytes.toBytes("column family"),
-				          Bytes.toBytes("column1"));
-				
-				System.out.println("Value retrieved is: " + Bytes.toString(value));
 				
 			} catch (Exception e)
 			{
