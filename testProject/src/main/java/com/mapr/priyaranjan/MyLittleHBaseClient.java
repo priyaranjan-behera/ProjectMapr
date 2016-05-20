@@ -25,9 +25,9 @@ public static void main(String[] args) throws IOException {
     Configuration config = HBaseConfiguration.create();
 
     // Lets create a HBaseAdmin here from the config
-    HBaseAdmin admin = new HBaseAdmin(conf);
+    HBaseAdmin admin = new HBaseAdmin(config);
     //From the configuration we create a connection to the cluster. 
-    Connection connection = ConnectionFactory.createConnection(config);
+    //Connection connection = ConnectionFactory.createConnection(config);
     try {
 
     	// Lets create a table here. 
@@ -117,7 +117,7 @@ public static void main(String[] args) throws IOException {
      }
 
     finally {
-       connection.close();
+       //connection.close();
      }
   }
 }
