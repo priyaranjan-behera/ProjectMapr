@@ -44,8 +44,41 @@ public class MapRDBTabularClient {
 		}catch(Exception e)
 		{
 			System.out.println("Error while creating table: " + e.getMessage());
+			e.printStackTrace();
 		}
 		
+	}
+	
+	public static void addDataToTable(String tableName)
+	{
+		// Reads the configurations from the conf folder as mentioned in the classpath. 
+	    Configuration config = HBaseConfiguration.create();
+	    
+	    //From the configuration we create a connection to the cluster. 
+	    try {
+			Connection connection = ConnectionFactory.createConnection(config);
+			Table table = connection.getTable(TableName.valueOf("/tmp/java_table"));
+			
+			try {
+				
+				Put p = new Put(Bytes.toBytes("Row1"));
+				p.add(Bytes.toBytes("column family"), Bytes.toBytes("column1"),Bytes.toBytes("10"));
+				table.put(p);
+				
+			} catch (Exception e)
+			{
+				System.out.println("Error while creating table: " + e.getMessage());
+				e.printStackTrace();
+			}finally {
+				connection.close();
+		    }
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Couldn't connect to the cluster: " + e.getMessage());
+			e.printStackTrace();
+		}
+	    
 	}
   @SuppressWarnings("deprecation")
 public static void main(String[] args) throws IOException {
@@ -59,10 +92,9 @@ public static void main(String[] args) throws IOException {
     //Connection connection = ConnectionFactory.createConnection(config);
     try {
 
-    	// Lets create a table here. 
-    	
-    	//creating table descriptor
     	createTable("/tmp/java_table");
+
+    	addDataToTable("/tmp/java_table");
     	/*
     	try {
 
