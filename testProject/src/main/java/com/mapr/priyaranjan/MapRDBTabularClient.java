@@ -67,7 +67,43 @@ public class MapRDBTabularClient {
 				
 			} catch (Exception e)
 			{
-				System.out.println("Error while creating table: " + e.getMessage());
+				System.out.println("Error while writing to table: " + e.getMessage());
+				e.printStackTrace();
+			}finally {
+				connection.close();
+		    }
+			
+		} catch (IOException e) {
+			System.out.println("Couldn't connect to the cluster: " + e.getMessage());
+			e.printStackTrace();
+		}
+	    
+	}
+	
+	
+	public static void getDataFromTable(String tableName)
+	{
+		// Reads the configurations from the conf folder as mentioned in the classpath. 
+	    Configuration config = HBaseConfiguration.create();
+	    
+	    //From the configuration we create a connection to the cluster. 
+	    try {
+			Connection connection = ConnectionFactory.createConnection(config);
+			Table table = connection.getTable(TableName.valueOf("/tmp/java_table"));
+			
+			try {
+				
+				Get g = new Get(Bytes.toBytes("Row1"));
+				Result r = table.get(g);
+				
+				byte[] value = r.getValue(Bytes.toBytes("column family"),
+				          Bytes.toBytes("column1"));
+				
+				System.out.println("Value retrieved is: " + value);
+				
+			} catch (Exception e)
+			{
+				System.out.println("Error while reading from table: " + e.getMessage());
 				e.printStackTrace();
 			}finally {
 				connection.close();
@@ -80,6 +116,8 @@ public class MapRDBTabularClient {
 		}
 	    
 	}
+	
+	
   @SuppressWarnings("deprecation")
 public static void main(String[] args) throws IOException {
     // Reads the configurations from the conf folder as mentioned in the classpath. 
@@ -92,9 +130,10 @@ public static void main(String[] args) throws IOException {
     //Connection connection = ConnectionFactory.createConnection(config);
     try {
 
-    	createTable("/tmp/java_table");
-
-    	addDataToTable("/tmp/java_table");
+    	//createTable("/tmp/java_table");
+    	//addDataToTable("/tmp/java_table");
+    	
+    	getDataFromTable("/tmp/java_table");
     	/*
     	try {
 
