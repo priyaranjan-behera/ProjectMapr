@@ -2,6 +2,7 @@ package com.mapr.priyaranjan;
 
 import java.io.IOException;
 
+import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
@@ -14,41 +15,36 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
 
-
-// Class that has nothing but a main.
-// Does a Put, Get and a Scan against an hbase table.
-// The API described here is since HBase 1.0.
 public class MyLittleHBaseClient {
-  public static void main(String[] args) throws IOException {
-    // You need a configuration object to tell the client where to connect.
-    // When you create a HBaseConfiguration, it reads in whatever you've set
-    // into your hbase-site.xml and in hbase-default.xml, as long as these can
-    // be found on the CLASSPATH
+  @SuppressWarnings("deprecation")
+public static void main(String[] args) throws IOException {
+    // Reads the configurations from the conf folder as mentioned in the classpath. 
     System.out.println("Will Read HBase Configuration");
     Configuration config = HBaseConfiguration.create();
 
-    // Next you need a Connection to the cluster. Create one. When done with it,
-    // close it. A try/finally is a good way to ensure it gets closed or use
-    // the jdk7 idiom, try-with-resources: see
-    // https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
-    //
-    // Connections are heavyweight.  Create one once and keep it around. From a Connection
-    // you get a Table instance to access Tables, an Admin instance to administer the cluster,
-    // and RegionLocator to find where regions are out on the cluster. As opposed to Connections,
-    // Table, Admin and RegionLocator instances are lightweight; create as you need them and then
-    // close when done.
-    //
+    // Lets create a HBaseAdmin here from the config
+    HBaseAdmin admin = new HBaseAdmin(conf);
+    //From the configuration we create a connection to the cluster. 
     Connection connection = ConnectionFactory.createConnection(config);
     try {
 
-      // The below instantiates a Table object that connects you to the "myLittleHBaseTable" table
-      // (TableName.valueOf turns String into a TableName instance).
-      // When done with it, close it (Should start a try/finally after this creation so it gets
-      // closed for sure the jdk7 idiom, try-with-resources: see
-      // https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html)
-      Table table = connection.getTable(TableName.valueOf("myLittleHBaseTable"));
-      try {
+    	// Lets create a table here. 
+    	
+    	//creating table descriptor
+    	HTableDescriptor table = new HTableDescriptor(Bytes.toBytes("/tmp/java_table"));
+    	
+    	//creating column family descriptor
+    	HColumnDescriptor family = new HColumnDescriptor(Bytes.toBytes("column family"));
+
+    	//adding column family to HTable
+    	table.addFamily(family);
+    	
+    	
+    	admin.createTable(table);
+    	/*
+    	try {
 
         // To add to a row, use Put.  A Put constructor takes the name of the row
         // you want to insert into as a byte array.  In HBase, the Bytes class has
@@ -117,7 +113,10 @@ public class MyLittleHBaseClient {
        } finally {
          if (table != null) table.close();
        }
-     } finally {
+            */ 
+     }
+
+    finally {
        connection.close();
      }
   }
