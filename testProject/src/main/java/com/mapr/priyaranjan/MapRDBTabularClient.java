@@ -136,7 +136,10 @@ public class MapRDBTabularClient {
 		        try {
 		            // Scanners return Result instances.
 		            for (Result rr : scanner) {
-		              System.out.println("Found row: " + rr);
+		            	
+		            	byte[] value = rr.getValue(Bytes.toBytes("column family"),
+						          Bytes.toBytes("column1"));
+		            	System.out.println("Value retrieved is: " + Bytes.toString(value));
 		            }
 		          } finally {
 		            // Make sure you close your scanners when you are done!
