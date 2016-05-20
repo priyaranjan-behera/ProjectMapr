@@ -130,7 +130,7 @@ public class MapRDBTabularClient {
 			try {
 				
 				Scan s = new Scan();
-		        s.addColumn(Bytes.toBytes("column_family"), Bytes.toBytes("column1"));
+		        s.addColumn(Bytes.toBytes("column family"), Bytes.toBytes("column1"));
 		        ResultScanner scanner = table.getScanner(s);
 		        
 		        try {
