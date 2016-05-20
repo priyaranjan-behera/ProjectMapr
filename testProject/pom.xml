@@ -14,5 +14,10 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.hbase</groupId>
+      <artifactId>hbase-client</artifactId>
+      <version>0.98.12-mapr-1506-m7-5.0.0</version>
+    </dependency>
   </dependencies>
 </project>
