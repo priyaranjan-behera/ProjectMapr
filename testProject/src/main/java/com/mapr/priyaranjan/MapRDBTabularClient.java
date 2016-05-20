@@ -61,8 +61,8 @@ public class MapRDBTabularClient {
 			
 			try {
 				
-				Put p = new Put(Bytes.toBytes("Row1"));
-				p.add(Bytes.toBytes("column family"), Bytes.toBytes("column1"),Bytes.toBytes("10"));
+				Put p = new Put(Bytes.toBytes("Row2"));
+				p.add(Bytes.toBytes("column family"), Bytes.toBytes("column2"),Bytes.toBytes("12"));
 				table.put(p);
 				
 			} catch (Exception e)
@@ -131,9 +131,9 @@ public static void main(String[] args) throws IOException {
     try {
 
     	//createTable("/tmp/java_table");
-    	//addDataToTable("/tmp/java_table");
+    	addDataToTable("/tmp/java_table");
     	
-    	getDataFromTable("/tmp/java_table");
+    	//getDataFromTable("/tmp/java_table");
     	/*
     	try {
 
