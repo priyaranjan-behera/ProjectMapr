@@ -40,6 +40,7 @@ public static void main(String[] args) throws IOException {
 	        System.out.println("City: " + document.getString("city"));
 	        System.out.println("Pop: " + document.getDouble("pop"));
 	        System.out.println("Id: " + document.getString("_id"));
+	        System.out.println("loc: " + document.getString("loc"));
 	        
 	  }
 	  
