@@ -26,10 +26,13 @@ public class MapRJSONProcessing {
 public static void main(String[] args) throws IOException {
     
 	  Scanner sc = new Scanner(new File("/tmp/zips.json"));
-	  
+	  int i = 0;
 	  while(sc.hasNext()){
+		  	System.out.println("This is line: " + Integer.toString(i));
 	        System.out.println(sc.nextLine());
 	  }
+	  
+	  sc.close();
     
   }
 }
