@@ -324,9 +324,12 @@ public static void main(String[] args) throws IOException {
     
     try {
     	//getAllDataFromTable("/tmp/java_table");
-    	createTableforZipJSON("/tmp/zips_table");
-    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_table");
+    	//createTableforZipJSON("/tmp/zips_table");
+    	//System.out.println("Created Table");
+    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_table");
+    	//System.out.println("Added Data to Table");
     	getAllZipDataFromTable("/tmp/zips_table");
+    	System.out.println("Completed reading data from the table");
     	
      }
     finally {
