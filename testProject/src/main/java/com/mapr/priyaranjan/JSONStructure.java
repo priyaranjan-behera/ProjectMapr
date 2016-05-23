@@ -4,13 +4,15 @@ import java.util.List;
 
 public class JSONStructure {
 	String city;
+	String state;
 	Double pop;
 	String id;
 	List<Object> location;
 	
-	public JSONStructure(String city, Double pop, String id, List<Object> loc) {
+	public JSONStructure(String city, String state, Double pop, String id, List<Object> loc) {
 		super();
 		this.city = city;
+		this.state = state;
 		this.pop = pop;
 		this.id = id;
 		this.location = loc;
@@ -18,6 +20,14 @@ public class JSONStructure {
 
 	public String getCity() {
 		return city;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public void setCity(String city) {

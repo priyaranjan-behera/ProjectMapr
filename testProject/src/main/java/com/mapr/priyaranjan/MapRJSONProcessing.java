@@ -56,11 +56,12 @@ public static void main(String[] args) throws IOException {
 		        
 		        System.out.println("Verifing if the document captured things:");
 		        System.out.println("City: " + document.getString("city"));
+		        System.out.println("State: " + document.getString("state"));
 		        System.out.println("Pop: " + document.getDouble("pop"));
 		        System.out.println("Id: " + document.getString("_id"));
 		        System.out.println("loc: " + document.getList("loc").get(1));
 		        
-		        currJSONStructure = new JSONStructure(document.getString("city"), document.getDouble("pop"), document.getString("_id"), document.getList("loc"));
+		        currJSONStructure = new JSONStructure(document.getString("city"), document.getString("state"), document.getDouble("pop"), document.getString("_id"), document.getList("loc"));
 		        
 		        ret.add(currJSONStructure);
 		        

@@ -62,6 +62,12 @@ public class MapRDBTabularClient {
 			// Lets create a HBaseAdmin here from the config
 			HBaseAdmin admin = new HBaseAdmin(config);
 			
+			if(admin.tableExists(tableName))
+			{
+				System.out.println("Table already exists!");
+				return;
+			}
+			
 			//creating table descriptor
 			HTableDescriptor table = new HTableDescriptor(Bytes.toBytes(tableName));
 	    	
@@ -144,6 +150,8 @@ public class MapRDBTabularClient {
 					p.add(Bytes.toBytes("Identification"), Bytes.toBytes("city"),Bytes.toBytes(row.getCity()));
 					table.put(p);
 					
+					p.add(Bytes.toBytes("Identification"), Bytes.toBytes("state"),Bytes.toBytes(row.getState()));
+					table.put(p);
 					
 					p.add(Bytes.toBytes("Stats"), Bytes.toBytes("pop"),Bytes.toBytes(row.getPop()));
 					table.put(p);
@@ -280,6 +288,7 @@ public class MapRDBTabularClient {
 				Scan s = new Scan();
 		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("id"));
 		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("city"));
+		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("state"));
 		        s.addColumn(Bytes.toBytes("Stats"), Bytes.toBytes("pop"));
 		        s.addColumn(Bytes.toBytes("Location"), Bytes.toBytes("loc1"));
 		        s.addColumn(Bytes.toBytes("Location"), Bytes.toBytes("loc2"));
@@ -293,6 +302,8 @@ public class MapRDBTabularClient {
 						          Bytes.toBytes("id"));
 		            	byte[] value2 = rr.getValue(Bytes.toBytes("Identification"),
 						          Bytes.toBytes("city"));
+		            	byte[] value6 = rr.getValue(Bytes.toBytes("Identification"),
+						          Bytes.toBytes("state"));
 		            	byte[] value3 = rr.getValue(Bytes.toBytes("Stats"),
 						          Bytes.toBytes("pop"));
 		            	byte[] value4 = rr.getValue(Bytes.toBytes("Location"),
@@ -302,6 +313,7 @@ public class MapRDBTabularClient {
 		            	System.out.println("*******************" + Bytes.toString(value1));
 		            	System.out.println("Id retrieved is: " + Bytes.toString(value1));
 		            	System.out.println("City retrieved is: " + Bytes.toString(value2));
+		            	System.out.println("State retrieved is: " + Bytes.toString(value6));
 		            	System.out.println("Pop retrieved is: " + Bytes.toDouble(value3));
 		            	System.out.println("Loc1 retrieved is: " + Bytes.toString(value4));
 		            	System.out.println("Loc2 retrieved is: " + Bytes.toString(value5));
@@ -337,11 +349,11 @@ public static void main(String[] args) throws IOException {
     
     try {
     	//getAllDataFromTable("/tmp/java_table");
-    	//createRelTableforZip"/tmp/zips_table");
+    	createRelTableforZip("/tmp/zips_rdb_table");
     	//System.out.println("Created Table");
-    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_table");
+    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb_table");
     	//System.out.println("Added Data to Table");
-    	getAllZipDataFromTable("/tmp/zips_table");
+    	getAllZipDataFromTable("/tmp/zips_rdb_table");
     	System.out.println("Completed reading data from the table");
     	
      }
