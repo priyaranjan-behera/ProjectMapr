@@ -18,6 +18,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
+import com.mapr.priyaranjan.MapRJSONProcessing;
 
 public class MapRDBTabularClient {
 	
@@ -131,7 +132,7 @@ public class MapRDBTabularClient {
 	    try {
 			Connection connection = ConnectionFactory.createConnection(config);
 			Table table = connection.getTable(TableName.valueOf("/tmp/java_table"));
-			List<JSONStructure> data = getDataFromFile("/tmp/zips.json");
+			List<JSONStructure> data = MapRJSONProcessing.getDataFromFile("/tmp/zips.json");
 			
 			try {
 				for(JSONStructure row:data)
@@ -148,10 +149,10 @@ public class MapRDBTabularClient {
 					table.put(p);
 					
 					
-					p.add(Bytes.toBytes("Location"), Bytes.toBytes("loc1"),Bytes.toBytes(row.getLocation().get(0)));
+					p.add(Bytes.toBytes("Location"), Bytes.toBytes("loc1"),Bytes.toBytes(row.getLocation().get(0).toString()));
 					table.put(p);
 					
-					p.add(Bytes.toBytes("Location"), Bytes.toBytes("loc2"),Bytes.toBytes(row.getLocation().get(1)));
+					p.add(Bytes.toBytes("Location"), Bytes.toBytes("loc2"),Bytes.toBytes(row.getLocation().get(1).toString()));
 					table.put(p);
 				}
 				
