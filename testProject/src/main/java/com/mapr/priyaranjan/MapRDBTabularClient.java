@@ -280,6 +280,9 @@ public class MapRDBTabularClient {
 				Scan s = new Scan();
 		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("id"));
 		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("city"));
+		        s.addColumn(Bytes.toBytes("Stats"), Bytes.toBytes("pop"));
+		        s.addColumn(Bytes.toBytes("Location"), Bytes.toBytes("loc1"));
+		        s.addColumn(Bytes.toBytes("Location"), Bytes.toBytes("loc2"));
 		        ResultScanner scanner = table.getScanner(s);
 		        
 		        try {
@@ -290,8 +293,18 @@ public class MapRDBTabularClient {
 						          Bytes.toBytes("id"));
 		            	byte[] value2 = rr.getValue(Bytes.toBytes("Identification"),
 						          Bytes.toBytes("city"));
+		            	byte[] value3 = rr.getValue(Bytes.toBytes("Stats"),
+						          Bytes.toBytes("pop"));
+		            	byte[] value4 = rr.getValue(Bytes.toBytes("Location"),
+						          Bytes.toBytes("loc1"));
+		            	byte[] value5 = rr.getValue(Bytes.toBytes("Location"),
+						          Bytes.toBytes("loc2"));
+		            	System.out.println("*******************" + Bytes.toString(value1));
 		            	System.out.println("Id retrieved is: " + Bytes.toString(value1));
 		            	System.out.println("City retrieved is: " + Bytes.toString(value2));
+		            	System.out.println("Pop retrieved is: " + Bytes.toString(value3));
+		            	System.out.println("Loc1 retrieved is: " + Bytes.toString(value4));
+		            	System.out.println("Loc2 retrieved is: " + Bytes.toString(value5));
 		            }
 		          } finally {
 		            // Make sure you close your scanners when you are done!
