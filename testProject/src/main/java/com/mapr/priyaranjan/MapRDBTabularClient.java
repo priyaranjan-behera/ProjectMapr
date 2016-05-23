@@ -549,7 +549,7 @@ public class MapRDBTabularClient {
 			
 			
 			
-			SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("pin"), CompareOp.GREATER, Bytes.toBytes(1));
+			SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("pin"), CompareOp.GREATER_OR_EQUAL, Bytes.toBytes(2));
 			
 			try {
 				
