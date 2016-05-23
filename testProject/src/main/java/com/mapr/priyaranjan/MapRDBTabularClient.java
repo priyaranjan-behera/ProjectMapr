@@ -63,7 +63,7 @@ public class MapRDBTabularClient {
 			HBaseAdmin admin = new HBaseAdmin(config);
 			
 			//creating table descriptor
-			HTableDescriptor table = new HTableDescriptor(Bytes.toBytes("/tmp/zip_table"));
+			HTableDescriptor table = new HTableDescriptor(Bytes.toBytes(tableName));
 	    	
 	    	//creating column family descriptor
 	    	HColumnDescriptor family = new HColumnDescriptor(Bytes.toBytes("Identification"));
@@ -131,8 +131,8 @@ public class MapRDBTabularClient {
 	    //From the configuration we create a connection to the cluster. 
 	    try {
 			Connection connection = ConnectionFactory.createConnection(config);
-			Table table = connection.getTable(TableName.valueOf("/tmp/java_table"));
-			List<JSONStructure> data = MapRJSONProcessing.getDataFromFile("/tmp/zips.json");
+			Table table = connection.getTable(TableName.valueOf(tableName));
+			List<JSONStructure> data = MapRJSONProcessing.getDataFromFile(fileName);
 			
 			try {
 				for(JSONStructure row:data)
@@ -265,12 +265,69 @@ public class MapRDBTabularClient {
 	
 	
 	
+	public static void getAllZipDataFromTable(String tableName)
+	{
+		// Reads the configurations from the conf folder as mentioned in the classpath. 
+	    Configuration config = HBaseConfiguration.create();
+	    
+	    //From the configuration we create a connection to the cluster. 
+	    try {
+			Connection connection = ConnectionFactory.createConnection(config);
+			Table table = connection.getTable(TableName.valueOf(tableName));
+			
+			try {
+				
+				Scan s = new Scan();
+		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("id"));
+		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("city"));
+		        ResultScanner scanner = table.getScanner(s);
+		        
+		        try {
+		            // Scanners return Result instances.
+		            for (Result rr : scanner) {
+		            	
+		            	byte[] value1 = rr.getValue(Bytes.toBytes("Identification"),
+						          Bytes.toBytes("id"));
+		            	byte[] value2 = rr.getValue(Bytes.toBytes("Identification"),
+						          Bytes.toBytes("city"));
+		            	System.out.println("Id retrieved is: " + Bytes.toString(value1));
+		            	System.out.println("City retrieved is: " + Bytes.toString(value2));
+		            }
+		          } finally {
+		            // Make sure you close your scanners when you are done!
+		            // Thats why we have it inside a try/finally clause
+		            scanner.close();
+		          }
+				
+				
+			} catch (Exception e)
+			{
+				System.out.println("Error while reading from table: " + e.getMessage());
+				e.printStackTrace();
+			}finally {
+				connection.close();
+		    }
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Couldn't connect to the cluster: " + e.getMessage());
+			e.printStackTrace();
+		}
+	    
+	}
+	
+	
+	
 	
   @SuppressWarnings("deprecation")
 public static void main(String[] args) throws IOException {
     
     try {
-    	getAllDataFromTable("/tmp/java_table");
+    	//getAllDataFromTable("/tmp/java_table");
+    	createTableforZipJSON("/tmp/zips_table");
+    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_table");
+    	getAllZipDataFromTable("/tmp/zips_table");
+    	
      }
     finally {
        //connection.close();
