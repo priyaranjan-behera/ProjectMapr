@@ -7,6 +7,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.ojai.Document;
 import org.ojai.DocumentStream;
+import org.ojai.store.QueryCondition;
+import org.ojai.store.QueryCondition.Op;
 
 import com.mapr.db.MapRDB;
 import com.mapr.db.Table;
@@ -52,7 +54,7 @@ public class MapRDBJSONClient {
 	    
 	}
 	
-	public static void findDocs(String tablePath) {
+	public static void findDocswithoutCondition(String tablePath) {
 		
 		try{
 			Table table = getDocTableforZipJSON(tablePath);
@@ -65,6 +67,29 @@ public class MapRDBJSONClient {
 			e.printStackTrace();
 		}
 	}
+	
+	public static QueryCondition buildQueryCondition() {
+	    return MapRDB.newCondition()
+	        .is("city", Op.EQUAL, "San Jose")
+	        .close()
+	      .build();
+	  }
+	
+	public static void findDocswithCondition(String tablePath, QueryCondition condition)
+	{
+		try{
+			Table table = MapRDB.getTable(tablePath);
+			DocumentStream documentStream = table.find(condition);
+			
+			for(Document document : documentStream) {
+		        System.out.println(document);
+		      }
+		}catch(Exception e) {
+			System.out.println("Error getting documents from the table");
+			e.printStackTrace();
+		}
+	}
+	
 
 	
 	
@@ -75,8 +100,10 @@ public static void main(String[] args) throws IOException {
     
     try {
     	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_json_table");
-    	findDocs("/tmp/zips_json_table");
+    	findDocswithoutCondition("/tmp/zips_json_table");
     	System.out.println("Completed reading data from the table");
+    	
+    	findDocswithCondition("/tmp/zips_json_table", buildQueryCondition());
     	
      }
     finally {
