@@ -357,7 +357,7 @@ public class MapRDBTabularClient {
 			Connection connection = ConnectionFactory.createConnection(config);
 			Table table = connection.getTable(TableName.valueOf(tableName));
 			
-			SingleColumnValueFilter filter = new SingleColumnValueFilter("Identification", "city", CompareOp.EQUAL, "SAN JOSE");
+			SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Identification"), Bytes.toBytes("city"), CompareOp.EQUAL, Bytes.toBytes("SAN JOSE"));
 			
 			try {
 				
