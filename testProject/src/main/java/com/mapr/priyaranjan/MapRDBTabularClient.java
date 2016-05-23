@@ -565,8 +565,7 @@ public class MapRDBTabularClient {
 		            	
 		            	byte[] value1 = rr.getValue(Bytes.toBytes("Data"),
 						          Bytes.toBytes("city"));
-		            	System.out.println("*******************" + Bytes.toString(value1));
-		            	System.out.println("City retrieved is: " + Bytes.toString(value1));
+		            	System.out.println("City with multiple zips: " + Bytes.toString(value1));
 		            	
 		            }
 		          } finally {
@@ -600,14 +599,15 @@ public static void main(String[] args) throws IOException {
     
     try {
     	//getAllDataFromTable("/tmp/java_table");
-    	createRelTableforZip("/tmp/zips_rdb1_table");
+    	//createRelTableforZip("/tmp/zips_rdb1_table");
     	//System.out.println("Created Table");
-    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb1_table");
+    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb1_table");
     	//System.out.println("Added Data to Table");
     	//getAllZipDataFromTable("/tmp/zips_rdb_table");
     	Double sanJosePop = getCityFilteredZipDataSumFromTable("/tmp/zips_rdb1_table", "SAN JOSE");
     	System.out.println("Getting zips with more population that San Jose: " + sanJosePop);
     	getPopulationFilteredZipDataFromTable("/tmp/zips_rdb1_table", sanJosePop);
+    	System.out.println("Getting multiple zip cities:");
     	getPinFilteredCityDataFromTable("/tmp/zips_rdb1_table");
      }
     finally {
