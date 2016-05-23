@@ -440,7 +440,7 @@ public class MapRDBTabularClient {
 			
 			
 			
-			SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Stats"), Bytes.toBytes("pop"), CompareOp.GREATER, Bytes.toBytes(pop));
+			SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Stats"), Bytes.toBytes("pop"), CompareOp.LESS, Bytes.toBytes(pop));
 			
 			try {
 				
@@ -516,7 +516,7 @@ public static void main(String[] args) throws IOException {
     	//System.out.println("Added Data to Table");
     	//getAllZipDataFromTable("/tmp/zips_rdb_table");
     	Double sanJosePop = getCityFilteredZipDataSumFromTable("/tmp/zips_rdb_table", "SAN JOSE");
-    	System.out.println("Getting zips with more population that San Jose");
+    	System.out.println("Getting zips with more population that San Jose: " + sanJosePop);
     	getPopulationFilteredZipDataFromTable("/tmp/zips_rdb_table", sanJosePop);
      }
     finally {
