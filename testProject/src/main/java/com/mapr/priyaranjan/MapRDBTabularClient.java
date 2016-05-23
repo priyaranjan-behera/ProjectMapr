@@ -440,7 +440,7 @@ public class MapRDBTabularClient {
 			
 			
 			
-			SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Stats"), Bytes.toBytes("pop"), CompareOp.LESS, Bytes.toBytes(pop));
+			SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Stats"), Bytes.toBytes("pop"), CompareOp.GREATER, Bytes.toBytes(pop));
 			
 			try {
 				
