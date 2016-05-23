@@ -70,7 +70,8 @@ public class MapRDBJSONClient {
 	
 	public static QueryCondition buildQueryCondition() {
 	    return MapRDB.newCondition()
-	        .is("city", Op.EQUAL, "San Jose")
+	    	.and()
+	        	.is("city", Op.EQUAL, "San Jose")
 	        .close()
 	      .build();
 	  }
