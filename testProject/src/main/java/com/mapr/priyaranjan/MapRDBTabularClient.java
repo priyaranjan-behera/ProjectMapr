@@ -143,6 +143,7 @@ public class MapRDBTabularClient {
 			try {
 				for(JSONStructure row:data)
 				{
+					System.out.println("Adding zip to database: " + row.getId());
 					Put p = new Put(Bytes.toBytes(row.getId()));
 					p.add(Bytes.toBytes("Identification"), Bytes.toBytes("id"),Bytes.toBytes(row.getId()));
 					table.put(p);
