@@ -302,7 +302,7 @@ public class MapRDBTabularClient {
 		            	System.out.println("*******************" + Bytes.toString(value1));
 		            	System.out.println("Id retrieved is: " + Bytes.toString(value1));
 		            	System.out.println("City retrieved is: " + Bytes.toString(value2));
-		            	System.out.println("Pop retrieved is: " + Bytes.toString(value3));
+		            	System.out.println("Pop retrieved is: " + Bytes.toDouble(value3));
 		            	System.out.println("Loc1 retrieved is: " + Bytes.toString(value4));
 		            	System.out.println("Loc2 retrieved is: " + Bytes.toString(value5));
 		            }
