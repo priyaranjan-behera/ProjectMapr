@@ -91,6 +91,14 @@ public class MapRDBTabularClient {
 	    	
 	    	admin.createTable(table);
 	    	
+	    	table = new HTableDescriptor(Bytes.toBytes(tableName+"_PinCount"));
+	    	family = new HColumnDescriptor(Bytes.toBytes("Data"));
+	    	table.addFamily(family);
+	    	admin.createTable(table);
+	    	
+	    	
+	    	
+	    	
 		}catch(Exception e)
 		{
 			System.out.println("Error while creating table: " + e.getMessage());
@@ -141,6 +149,7 @@ public class MapRDBTabularClient {
 	    try {
 			Connection connection = ConnectionFactory.createConnection(config);
 			Table table = connection.getTable(TableName.valueOf(tableName));
+			Table stat_table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
 			List<JSONStructure> data = MapRJSONProcessing.getDataFromFile(fileName);
 			
 			try {
@@ -166,6 +175,29 @@ public class MapRDBTabularClient {
 					
 					p.add(Bytes.toBytes("Location"), Bytes.toBytes("loc2"),Bytes.toBytes(row.getLocation().get(1).toString()));
 					table.put(p);
+					
+					
+					//Now logic to track multiple zip codes
+					SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("city"), CompareOp.EQUAL, Bytes.toBytes(row.getCity()));
+					
+					Get g = new Get(Bytes.toBytes(row.getCity()));
+					if(!stat_table.exists(g))
+					{
+						p = new Put(Bytes.toBytes(row.getCity()));
+						p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(1));
+						stat_table.put(p);
+						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(row.getCity()));
+						stat_table.put(p);
+					}
+					else
+					{
+						p = new Put(Bytes.toBytes(row.getCity()));
+						p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(2));
+						stat_table.put(p);
+						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(row.getCity()));
+						stat_table.put(p);
+					}
+					
 				}
 				
 			} catch (Exception e)
@@ -505,19 +537,78 @@ public class MapRDBTabularClient {
 	
 	
 	
+	public static void getPinFilteredCityDataFromTable(String tableName)
+	{
+		// Reads the configurations from the conf folder as mentioned in the classpath. 
+	    Configuration config = HBaseConfiguration.create();
+	    
+	    //From the configuration we create a connection to the cluster. 
+	    try {
+			Connection connection = ConnectionFactory.createConnection(config);
+			Table table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
+			
+			
+			
+			SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("pin"), CompareOp.GREATER, Bytes.toBytes(1));
+			
+			try {
+				
+				Scan s = new Scan();
+		        s.addColumn(Bytes.toBytes("Data"), Bytes.toBytes("pin"));
+		        s.addColumn(Bytes.toBytes("Data"), Bytes.toBytes("city"));
+		        s.setFilter(filter);
+		        ResultScanner scanner = table.getScanner(s);
+		        
+		        try {
+		            // Scanners return Result instances.
+		            for (Result rr : scanner) {
+		            	
+		            	byte[] value1 = rr.getValue(Bytes.toBytes("Data"),
+						          Bytes.toBytes("city"));
+		            	System.out.println("*******************" + Bytes.toString(value1));
+		            	System.out.println("City retrieved is: " + Bytes.toString(value1));
+		            	
+		            }
+		          } finally {
+		            // Make sure you close your scanners when you are done!
+		            // Thats why we have it inside a try/finally clause
+		            scanner.close();
+		          }
+				
+				
+			} catch (Exception e)
+			{
+				System.out.println("Error while reading from table: " + e.getMessage());
+				e.printStackTrace();
+			}finally {
+				connection.close();
+		    }
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Couldn't connect to the cluster: " + e.getMessage());
+			e.printStackTrace();
+		}
+	    
+	    
+	}
+	
+	
+	
   @SuppressWarnings("deprecation")
 public static void main(String[] args) throws IOException {
     
     try {
     	//getAllDataFromTable("/tmp/java_table");
-    	//createRelTableforZip("/tmp/zips_rdb_table");
+    	createRelTableforZip("/tmp/zips_rdb1_table");
     	//System.out.println("Created Table");
-    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb_table");
+    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb1_table");
     	//System.out.println("Added Data to Table");
     	//getAllZipDataFromTable("/tmp/zips_rdb_table");
-    	Double sanJosePop = getCityFilteredZipDataSumFromTable("/tmp/zips_rdb_table", "SAN JOSE");
+    	Double sanJosePop = getCityFilteredZipDataSumFromTable("/tmp/zips_rdb1_table", "SAN JOSE");
     	System.out.println("Getting zips with more population that San Jose: " + sanJosePop);
-    	getPopulationFilteredZipDataFromTable("/tmp/zips_rdb_table", sanJosePop);
+    	getPopulationFilteredZipDataFromTable("/tmp/zips_rdb1_table", sanJosePop);
+    	getPinFilteredCityDataFromTable("/tmp/zips_rdb1_table");
      }
     finally {
        //connection.close();
