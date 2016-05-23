@@ -52,7 +52,7 @@ public class MapRDBTabularClient {
 	}
 	
 	
-	public static void createTableforZipJSON(String tableName)
+	public static void createRelTableforZip(String tableName)
 	{
 		try{
 
@@ -337,7 +337,7 @@ public static void main(String[] args) throws IOException {
     
     try {
     	//getAllDataFromTable("/tmp/java_table");
-    	//createTableforZipJSON("/tmp/zips_table");
+    	//createRelTableforZip"/tmp/zips_table");
     	//System.out.println("Created Table");
     	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_table");
     	//System.out.println("Added Data to Table");

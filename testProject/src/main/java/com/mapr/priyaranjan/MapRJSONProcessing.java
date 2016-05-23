@@ -87,4 +87,50 @@ public static void main(String[] args) throws IOException {
 	  return ret;
 	  
   }
+
+
+
+	public static List<Document> getJSONDocsFromFile(String filename)
+	{
+		  List<Document> ret = new ArrayList<Document>();
+		  try
+		  {
+			  Scanner sc = new Scanner(new File(filename));
+		  
+			  try
+			  {
+				 
+			  String curJSON;
+			  int i = 0;
+			  
+			  while(sc.hasNext()){
+				  	System.out.println("This is line: " + Integer.toString(i++));
+			        curJSON = new String(sc.nextLine());
+			        
+			        Document document = MapRDB.newDocument(curJSON);
+			        ret.add(document);
+			        
+			  }
+			  
+			  }
+			  catch(Exception e)
+			  {
+				  System.out.println("Error while reading from json: " + e.getMessage());
+				  e.printStackTrace();
+			  }
+			  finally
+			  {
+				  sc.close();
+			  }
+		  
+		  }
+		  catch(Exception e)
+		  {
+			  System.out.println("Error creating the scanner for the give filename");
+			  e.printStackTrace();
+		  }
+		  
+		  return ret;
+		  
+	}
 }
