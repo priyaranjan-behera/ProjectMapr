@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.ojai.Document;
+import org.ojai.DocumentStream;
 
 import com.mapr.db.MapRDB;
 import com.mapr.db.Table;
@@ -51,6 +52,21 @@ public class MapRDBJSONClient {
 	    
 	}
 	
+	public static void findDocs(String tablePath) {
+		
+		try{
+			Table table = getDocTableforZipJSON(tablePath);
+			DocumentStream documentStream = table.find();
+			for(Document document : documentStream) {
+		        System.out.println(document);
+		      }
+		} catch(Exception e) {
+			System.out.println("Error getting documents from the table");
+			e.printStackTrace();
+		}
+	}
+
+	
 	
 	
 	
@@ -58,12 +74,8 @@ public class MapRDBJSONClient {
 public static void main(String[] args) throws IOException {
     
     try {
-    	//getAllDataFromTable("/tmp/java_table");
-    	//createTableforZipJSON("/tmp/zips_table");
-    	//System.out.println("Created Table");
-    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_table");
-    	//System.out.println("Added Data to Table");
-    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_json_table");
+    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_json_table");
+    	findDocs("/tmp/zips_json_table");
     	System.out.println("Completed reading data from the table");
     	
      }
