@@ -27,7 +27,6 @@ public class MapRDBJSONClient {
 	public static void addDataToTableFromJSON(String fileName, String tableName)
 	{
 		// Reads the configurations from the conf folder as mentioned in the classpath. 
-	    Configuration config = HBaseConfiguration.create();
 	    
 	    //From the configuration we create a connection to the cluster. 
 	    try {

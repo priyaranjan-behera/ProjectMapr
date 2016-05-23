@@ -19,6 +19,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import com.mapr.priyaranjan.MapRJSONProcessing;
+import org.apache.hadoop.hbase.client.coprocessor.AggregationClient;
+import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 
 public class MapRDBTabularClient {
 	
@@ -344,17 +347,90 @@ public class MapRDBTabularClient {
 	
 	
 	
+	public static void getFilteredZipDataFromTable(String tableName)
+	{
+		// Reads the configurations from the conf folder as mentioned in the classpath. 
+	    Configuration config = HBaseConfiguration.create();
+	    
+	    //From the configuration we create a connection to the cluster. 
+	    try {
+			Connection connection = ConnectionFactory.createConnection(config);
+			Table table = connection.getTable(TableName.valueOf(tableName));
+			
+			SingleColumnValueFilter filter = new SingleColumnValueFilter("Identification", "city", CompareOp.EQUAL, "SAN JOSE");
+			
+			try {
+				
+				Scan s = new Scan();
+		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("id"));
+		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("city"));
+		        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("state"));
+		        s.addColumn(Bytes.toBytes("Stats"), Bytes.toBytes("pop"));
+		        s.addColumn(Bytes.toBytes("Location"), Bytes.toBytes("loc1"));
+		        s.addColumn(Bytes.toBytes("Location"), Bytes.toBytes("loc2"));
+		        s.setFilter(filter);
+		        ResultScanner scanner = table.getScanner(s);
+		        
+		        try {
+		            // Scanners return Result instances.
+		            for (Result rr : scanner) {
+		            	
+		            	byte[] value1 = rr.getValue(Bytes.toBytes("Identification"),
+						          Bytes.toBytes("id"));
+		            	byte[] value2 = rr.getValue(Bytes.toBytes("Identification"),
+						          Bytes.toBytes("city"));
+		            	byte[] value6 = rr.getValue(Bytes.toBytes("Identification"),
+						          Bytes.toBytes("state"));
+		            	byte[] value3 = rr.getValue(Bytes.toBytes("Stats"),
+						          Bytes.toBytes("pop"));
+		            	byte[] value4 = rr.getValue(Bytes.toBytes("Location"),
+						          Bytes.toBytes("loc1"));
+		            	byte[] value5 = rr.getValue(Bytes.toBytes("Location"),
+						          Bytes.toBytes("loc2"));
+		            	System.out.println("*******************" + Bytes.toString(value1));
+		            	System.out.println("Id retrieved is: " + Bytes.toString(value1));
+		            	System.out.println("City retrieved is: " + Bytes.toString(value2));
+		            	System.out.println("State retrieved is: " + Bytes.toString(value6));
+		            	System.out.println("Pop retrieved is: " + Bytes.toDouble(value3));
+		            	System.out.println("Loc1 retrieved is: " + Bytes.toString(value4));
+		            	System.out.println("Loc2 retrieved is: " + Bytes.toString(value5));
+		            }
+		          } finally {
+		            // Make sure you close your scanners when you are done!
+		            // Thats why we have it inside a try/finally clause
+		            scanner.close();
+		          }
+				
+				
+			} catch (Exception e)
+			{
+				System.out.println("Error while reading from table: " + e.getMessage());
+				e.printStackTrace();
+			}finally {
+				connection.close();
+		    }
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Couldn't connect to the cluster: " + e.getMessage());
+			e.printStackTrace();
+		}
+	    
+	}
+	
+	
 	
   @SuppressWarnings("deprecation")
 public static void main(String[] args) throws IOException {
     
     try {
     	//getAllDataFromTable("/tmp/java_table");
-    	createRelTableforZip("/tmp/zips_rdb_table");
+    	//createRelTableforZip("/tmp/zips_rdb_table");
     	//System.out.println("Created Table");
-    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb_table");
+    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb_table");
     	//System.out.println("Added Data to Table");
-    	getAllZipDataFromTable("/tmp/zips_rdb_table");
+    	//getAllZipDataFromTable("/tmp/zips_rdb_table");
+    	getFilteredZipDataFromTable("/tmp/zips_rdb_table");
     	System.out.println("Completed reading data from the table");
     	
      }
