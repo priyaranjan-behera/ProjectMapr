@@ -204,7 +204,7 @@ public class MapRDBTabularClient {
 				        if(count > 1)
 				        {
 				        	p = new Put(Bytes.toBytes(row.getCity()));
-							p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(2));
+							p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
 							stat_table.put(p);
 				        }
 					}
