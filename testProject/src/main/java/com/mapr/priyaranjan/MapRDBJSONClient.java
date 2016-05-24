@@ -1,7 +1,9 @@
 package com.mapr.priyaranjan;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -80,40 +82,47 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 		Connection connection = ConnectionFactory.createConnection(config);
 
 		org.apache.hadoop.hbase.client.Table stat_table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
+		
+		Set<String> cities = new HashSet<String>();
 
 		try {
 			for(Document row:data)
 			{
-				System.out.println("Adding to database, row: " + i++);
+				System.out.println("Adding to database, row: " + i++ + " city: " + row.getString("city"));
 				table.insertOrReplace(row);
-				
-				Get g = new Get(Bytes.toBytes(row.getString("city")));
-				System.out.println("Adding to database, city: " + row.getString("city"));
+
+
+				cities.add(row.getString("city"));
+
+			}
+			
+			for (String city:cities)
+			{				
+				Get g = new Get(Bytes.toBytes(city));
+				System.out.println("Adding to count database, city: " + city);
 
 				if(!stat_table.exists(g))
 				{
-					Put p = new Put(Bytes.toBytes(row.getString("city")));
+					Put p = new Put(Bytes.toBytes(city));
 					p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(1));
 					stat_table.put(p);
-					p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(row.getString("city")));
+					p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
 					stat_table.put(p);
 				}
 				else
 				{
-					count = findNumDocswithPin(tableName, row.getString("city"));
+					count = findNumDocswithPin(tableName, city);
 					System.out.println("Count found: " + count);
 					
 			        if(count > 1)
 			        {
-			        	Put p = new Put(Bytes.toBytes(row.getString("city")));
+			        	Put p = new Put(Bytes.toBytes(city));
 						p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
 						stat_table.put(p);
-						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(row.getString("city")));
+						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
 						stat_table.put(p);
 			        }
 				}
-				
-				
 				
 			}
 
