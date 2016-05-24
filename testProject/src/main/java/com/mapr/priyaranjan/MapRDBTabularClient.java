@@ -91,6 +91,11 @@ public class MapRDBTabularClient {
 	    	
 	    	admin.createTable(table);
 	    	
+	    	if(admin.tableExists(tableName+"_PinCount"))
+			{
+				System.out.println("Count Table already exists!");
+				return;
+			}
 	    	table = new HTableDescriptor(Bytes.toBytes(tableName+"_PinCount"));
 	    	family = new HColumnDescriptor(Bytes.toBytes("Data"));
 	    	table.addFamily(family);
@@ -178,7 +183,7 @@ public class MapRDBTabularClient {
 					
 					
 					//Now logic to track multiple zip codes
-					
+					System.out.println("Checking count for: " + row.getCity());
 					Get g = new Get(Bytes.toBytes(row.getCity()));
 					if(!stat_table.exists(g))
 					{
@@ -190,10 +195,10 @@ public class MapRDBTabularClient {
 					}
 					else
 					{
-						SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("city"), CompareOp.EQUAL, Bytes.toBytes(row.getCity()));
+						SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Identification"), Bytes.toBytes("city"), CompareOp.EQUAL, Bytes.toBytes(row.getCity()));
 						
 						Scan s = new Scan();
-				        s.addColumn(Bytes.toBytes("Data"), Bytes.toBytes("pin"));
+				        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("id"));
 				        s.setFilter(filter);
 				        ResultScanner scanner = stat_table.getScanner(s);
 				        
@@ -201,10 +206,13 @@ public class MapRDBTabularClient {
 				        for (Result rr : scanner) {
 				        	count++;
 				        }
+				        System.out.println("Inserting " + row.getCity() + " Found Count: " + count);
 				        if(count > 1)
 				        {
 				        	p = new Put(Bytes.toBytes(row.getCity()));
 							p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
+							stat_table.put(p);
+							p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(row.getCity()));
 							stat_table.put(p);
 				        }
 					}
@@ -216,6 +224,8 @@ public class MapRDBTabularClient {
 				System.out.println("Error while writing to table: " + e.getMessage());
 				e.printStackTrace();
 			}finally {
+				table.close();
+				stat_table.close();
 				connection.close();
 		    }
 			
@@ -610,16 +620,16 @@ public static void main(String[] args) throws IOException {
     
     try {
     	//getAllDataFromTable("/tmp/java_table");
-    	createRelTableforZip("/tmp/zips_rdb2_table");
+    	createRelTableforZip("/tmp/zips_rdb3_table");
     	System.out.println("Created Table");
-    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb2_table");
+    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb3_table");
     	System.out.println("Added Data to Table");
     	//getAllZipDataFromTable("/tmp/zips_rdb_table");
-    	Double sanJosePop = getCityFilteredZipDataSumFromTable("/tmp/zips_rdb2_table", "SAN JOSE");
+    	Double sanJosePop = getCityFilteredZipDataSumFromTable("/tmp/zips_rdb3_table", "SAN JOSE");
     	System.out.println("Getting zips with more population that San Jose: " + sanJosePop);
-    	getPopulationFilteredZipDataFromTable("/tmp/zips_rdb2_table", sanJosePop);
+    	getPopulationFilteredZipDataFromTable("/tmp/zips_rdb3_table", sanJosePop);
     	System.out.println("Getting multiple zip cities:");
-    	getPinFilteredCityDataFromTable("/tmp/zips_rdb2_table");
+    	getPinFilteredCityDataFromTable("/tmp/zips_rdb3_table");
      }
     finally {
        //connection.close();
