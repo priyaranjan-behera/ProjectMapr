@@ -75,6 +75,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 	try {
 		Table table = getDocTableforZipJSON(tableName);
 		List<Document> data = MapRJSONProcessing.getJSONDocsFromFile(fileName);
+		
 		Configuration config = HBaseConfiguration.create();
 		Connection connection = ConnectionFactory.createConnection(config);
 		org.apache.hadoop.hbase.client.Table stat_table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
@@ -86,7 +87,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 				table.insertOrReplace(row);
 				
 				Get g = new Get(Bytes.toBytes(row.getString("city")));
-				
+				System.out.println("Adding to database, city: " + row.getString("city"));
 				if(!stat_table.exists(g))
 				{
 					Put p = new Put(Bytes.toBytes(row.getString("city")));
@@ -96,6 +97,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 				else
 				{
 					count = findNumDocswithPin(tableName+"_PinCount", row.getString("city"));
+					System.out.println("Count found: " + count);
 					
 			        if(count > 1)
 			        {
@@ -201,7 +203,7 @@ public static void getPinFilteredCityDataFromTable(String tableName)
 		Connection connection = ConnectionFactory.createConnection(config);
 		org.apache.hadoop.hbase.client.Table table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
 		
-		
+		System.out.println("Invoking function to get pin filtered city.");
 		
 		SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("pin"), CompareOp.GREATER_OR_EQUAL, Bytes.toBytes(2));
 		
