@@ -78,7 +78,6 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 		
 		Configuration config = HBaseConfiguration.create();
 		Connection connection = ConnectionFactory.createConnection(config);
-		org.apache.hadoop.hbase.client.Table stat_table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
 
 		try {
 			for(Document row:data)
@@ -88,6 +87,8 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 				
 				Get g = new Get(Bytes.toBytes(row.getString("city")));
 				System.out.println("Adding to database, city: " + row.getString("city"));
+
+				org.apache.hadoop.hbase.client.Table stat_table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
 				if(!stat_table.exists(g))
 				{
 					Put p = new Put(Bytes.toBytes(row.getString("city")));
@@ -112,7 +113,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 				}
 				
 				
-				
+				stat_table.close();
 				
 				
 			}
@@ -187,7 +188,8 @@ public static int findNumDocswithPin(String tablePath, String city)
 		DocumentStream documentStream = table.find(buildQueryConditionMultiplePins(city));
 
 		for(Document document : documentStream) {
-			count++;;
+			System.out.println("Incrementing Count: " + count);
+			count++;
 		}
 	}catch(Exception e) {
 		System.out.println("Error getting documents from the table");
