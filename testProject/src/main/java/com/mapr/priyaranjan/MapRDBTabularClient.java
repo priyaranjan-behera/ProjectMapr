@@ -195,7 +195,7 @@ public class MapRDBTabularClient {
 						Scan s = new Scan();
 				        s.addColumn(Bytes.toBytes("Data"), Bytes.toBytes("pin"));
 				        s.setFilter(filter);
-				        ResultScanner scanner = table.getScanner(s);
+				        ResultScanner scanner = stat_table.getScanner(s);
 				        
 				        int count = 0;
 				        for (Result rr : scanner) {
