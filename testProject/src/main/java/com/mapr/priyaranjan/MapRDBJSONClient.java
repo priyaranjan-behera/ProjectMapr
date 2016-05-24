@@ -174,7 +174,7 @@ public static QueryCondition buildSanJoseQueryCondition(String tablePath) {
 	
 	return MapRDB.newCondition()
 			.and()
-			.is("pop", Op.GREATER, totalPopulation)
+			.is("pop", Op.LESS, totalPopulation)
 			.close()
 			.build();
 }
