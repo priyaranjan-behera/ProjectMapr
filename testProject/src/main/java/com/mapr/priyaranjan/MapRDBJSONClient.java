@@ -69,6 +69,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 {
 	// Reads the configurations from the conf folder as mentioned in the classpath. 
 	int count;
+	int i=0;
 
 	//From the configuration we create a connection to the cluster. 
 	try {
@@ -81,6 +82,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 		try {
 			for(Document row:data)
 			{
+				System.out.println("Adding to database, row: " + i++);
 				table.insertOrReplace(row);
 				
 				Get g = new Get(Bytes.toBytes(row.getString("city")));
