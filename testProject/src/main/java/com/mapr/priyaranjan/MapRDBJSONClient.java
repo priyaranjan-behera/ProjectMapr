@@ -100,7 +100,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 			{				
 				
 					count = findNumDocswithPin(tableName, city);
-					System.out.println("Count found: " + count);
+					System.out.println("Count found: " + count + "for City: " + city);
 					
 			   
 		        	Put p = new Put(Bytes.toBytes(city));
@@ -213,7 +213,7 @@ public static int findNumDocswithPin(String tablePath, String city)
 		DocumentStream documentStream = table.find(buildQueryConditionMultiplePins(city));
 
 		for(Document document : documentStream) {
-			System.out.println("Incrementing Count: " + count);
+			//System.out.println("Incrementing Count: " + count);
 			count++;
 		}
 	}catch(Exception e) {
