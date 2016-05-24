@@ -164,6 +164,35 @@ public static QueryCondition buildQueryCondition() {
 			.build();
 }
 
+public static QueryCondition buildSanJoseQueryCondition(String tablePath) {
+	
+	Double totalPopulation = new Double(0);
+	try{
+		Table table = MapRDB.getTable(tablePath);
+		DocumentStream documentStream = table.find(buildQueryCondition());
+		
+
+		for(Document document : documentStream) {
+			System.out.println(document);
+			totalPopulation = Double.sum(totalPopulation, document.getDouble("pop"));
+		}
+		
+		System.out.println("Total San Jose Population: " + totalPopulation);
+		
+
+		
+	}catch(Exception e) {
+		System.out.println("Error creating query condition for San Jose Population");
+		e.printStackTrace();
+	}
+	
+	return MapRDB.newCondition()
+			.and()
+			.is("pop", Op.GREATER, totalPopulation)
+			.close()
+			.build();
+}
+
 public static void findDocswithCondition(String tablePath, QueryCondition condition)
 {
 	try{
@@ -186,6 +215,7 @@ public static QueryCondition buildQueryConditionMultiplePins(String city) {
 			.close()
 			.build();
 }
+
 
 
 
@@ -268,11 +298,11 @@ public static void getPinFilteredCityDataFromTable(String tableName)
 public static void main(String[] args) throws IOException {
 
 	try {
-		addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_json2_table");
+		//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_json2_table");
 		findDocswithoutCondition("/tmp/zips_json2_table");
 		System.out.println("Completed reading data from the table");
 
-		findDocswithCondition("/tmp/zips_json2_table", buildQueryCondition());
+		findDocswithCondition("/tmp/zips_json2_table", buildSanJoseQueryCondition("/tmp/zips_json2_table"));
 		
 		System.out.println("Getting multiple zip cities:");
     	getPinFilteredCityDataFromTable("/tmp/zips_json2_table");

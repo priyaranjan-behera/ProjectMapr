@@ -632,10 +632,10 @@ public static void main(String[] args) throws IOException {
     
     try {
     	//getAllDataFromTable("/tmp/java_table");
-    	createRelTableforZip("/tmp/zips_rdb3_table");
-    	System.out.println("Created Table");
-    	addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb3_table");
-    	System.out.println("Added Data to Table");
+    	//createRelTableforZip("/tmp/zips_rdb3_table");
+    	//System.out.println("Created Table");
+    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb3_table");
+    	//System.out.println("Added Data to Table");
     	//getAllZipDataFromTable("/tmp/zips_rdb_table");
     	Double sanJosePop = getCityFilteredZipDataSumFromTable("/tmp/zips_rdb3_table", "SAN JOSE");
     	System.out.println("Getting zips with more population that San Jose: " + sanJosePop);
