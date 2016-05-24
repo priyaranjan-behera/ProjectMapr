@@ -93,6 +93,8 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 					Put p = new Put(Bytes.toBytes(row.getString("city")));
 					p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(1));
 					stat_table.put(p);
+					p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(row.getString("city")));
+					stat_table.put(p);
 				}
 				else
 				{
@@ -103,6 +105,8 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 			        {
 			        	Put p = new Put(Bytes.toBytes(row.getString("city")));
 						p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
+						stat_table.put(p);
+						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(row.getString("city")));
 						stat_table.put(p);
 			        }
 				}
