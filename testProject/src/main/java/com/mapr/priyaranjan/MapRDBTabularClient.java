@@ -196,9 +196,10 @@ public class MapRDBTabularClient {
 					else
 					{
 						SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Identification"), Bytes.toBytes("city"), CompareOp.EQUAL, Bytes.toBytes(row.getCity()));
-						
+						System.out.println("New Filter is created here.");
 						Scan s = new Scan();
 				        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("id"));
+				        s.addColumn(Bytes.toBytes("Identification"), Bytes.toBytes("city"));
 				        s.setFilter(filter);
 				        ResultScanner scanner = table.getScanner(s);
 				        
