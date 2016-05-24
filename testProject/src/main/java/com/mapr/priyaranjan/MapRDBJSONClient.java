@@ -99,7 +99,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 				}
 				else
 				{
-					count = findNumDocswithPin(tableName+"_PinCount", row.getString("city"));
+					count = findNumDocswithPin(tableName, row.getString("city"));
 					System.out.println("Count found: " + count);
 					
 			        if(count > 1)
