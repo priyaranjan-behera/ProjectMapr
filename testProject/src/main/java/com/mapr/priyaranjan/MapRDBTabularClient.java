@@ -178,7 +178,6 @@ public class MapRDBTabularClient {
 					
 					
 					//Now logic to track multiple zip codes
-					SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("city"), CompareOp.EQUAL, Bytes.toBytes(row.getCity()));
 					
 					Get g = new Get(Bytes.toBytes(row.getCity()));
 					if(!stat_table.exists(g))
@@ -191,11 +190,23 @@ public class MapRDBTabularClient {
 					}
 					else
 					{
-						p = new Put(Bytes.toBytes(row.getCity()));
-						p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(2));
-						stat_table.put(p);
-						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(row.getCity()));
-						stat_table.put(p);
+						SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("city"), CompareOp.EQUAL, Bytes.toBytes(row.getCity()));
+						
+						Scan s = new Scan();
+				        s.addColumn(Bytes.toBytes("Data"), Bytes.toBytes("pin"));
+				        s.setFilter(filter);
+				        ResultScanner scanner = table.getScanner(s);
+				        
+				        int count = 0;
+				        for (Result rr : scanner) {
+				        	count++;
+				        }
+				        if(count > 1)
+				        {
+				        	p = new Put(Bytes.toBytes(row.getCity()));
+							p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(2));
+							stat_table.put(p);
+				        }
 					}
 					
 				}
