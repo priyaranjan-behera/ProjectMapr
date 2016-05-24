@@ -623,9 +623,9 @@ public static void main(String[] args) throws IOException {
     	String fileName = args[0];
     	String tableName = args[1];
     	//getAllDataFromTable("/tmp/java_table");
-    	createRelTableforZip(tableName);
-    	System.out.println("Created Table");
-    	addDataToTableFromJSON(fileName,tableName);
+    	//createRelTableforZip(tableName);
+    	//System.out.println("Created Table");
+    	//addDataToTableFromJSON(fileName,tableName);
     	//System.out.println("Added Data to Table");
     	//getAllZipDataFromTable("/tmp/zips_rdb_table");
     	
