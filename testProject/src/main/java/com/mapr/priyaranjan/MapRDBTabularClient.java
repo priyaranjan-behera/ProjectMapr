@@ -620,17 +620,20 @@ public class MapRDBTabularClient {
 public static void main(String[] args) throws IOException {
     
     try {
+    	String fileName = args[1];
+    	String tableName = args[2];
     	//getAllDataFromTable("/tmp/java_table");
-    	//createRelTableforZip("/tmp/zips_rdb3_table");
-    	//System.out.println("Created Table");
-    	//addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_rdb3_table");
+    	createRelTableforZip(tableName);
+    	System.out.println("Created Table");
+    	addDataToTableFromJSON(fileName,tableName);
     	//System.out.println("Added Data to Table");
     	//getAllZipDataFromTable("/tmp/zips_rdb_table");
-    	Double sanJosePop = getCityFilteredZipDataSumFromTable("/tmp/zips_rdb3_table", "SAN JOSE");
+    	
+    	Double sanJosePop = getCityFilteredZipDataSumFromTable(tableName, "SAN JOSE");
     	System.out.println("Getting zips with more population that San Jose: " + sanJosePop);
-    	getPopulationFilteredZipDataFromTable("/tmp/zips_rdb3_table", sanJosePop);
+    	getPopulationFilteredZipDataFromTable(tableName, sanJosePop);
     	System.out.println("Getting multiple zip cities:");
-    	getPinFilteredCityDataFromTable("/tmp/zips_rdb3_table");
+    	getPinFilteredCityDataFromTable(tableName);
      }
     finally {
        //connection.close();

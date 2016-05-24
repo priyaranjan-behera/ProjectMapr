@@ -284,14 +284,17 @@ public static void getPinFilteredCityDataFromTable(String tableName)
 public static void main(String[] args) throws IOException {
 
 	try {
-		addDataToTableFromJSON("/tmp/zips.json","/tmp/zips_json3_table");
-		findDocswithoutCondition("/tmp/zips_json3_table");
+		String fileName = args[1];
+    	String tableName = args[2];
+    	
+		addDataToTableFromJSON(fileName,tableName);
+		findDocswithoutCondition(tableName);
 		System.out.println("Completed reading data from the table");
 
-		findDocswithCondition("/tmp/zips_json3_table", buildSanJoseQueryCondition("/tmp/zips_json3_table"));
+		findDocswithCondition(tableName, buildSanJoseQueryCondition(tableName));
 		
 		System.out.println("Getting multiple zip cities:");
-    	getPinFilteredCityDataFromTable("/tmp/zips_json3_table");
+    	getPinFilteredCityDataFromTable(tableName);
 
 	}
 	finally {
