@@ -620,8 +620,8 @@ public class MapRDBTabularClient {
 public static void main(String[] args) throws IOException {
     
     try {
-    	String fileName = args[1];
-    	String tableName = args[2];
+    	String fileName = args[0];
+    	String tableName = args[1];
     	//getAllDataFromTable("/tmp/java_table");
     	createRelTableforZip(tableName);
     	System.out.println("Created Table");

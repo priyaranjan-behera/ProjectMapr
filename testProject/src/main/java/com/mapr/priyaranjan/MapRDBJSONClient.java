@@ -284,8 +284,8 @@ public static void getPinFilteredCityDataFromTable(String tableName)
 public static void main(String[] args) throws IOException {
 
 	try {
-		String fileName = args[1];
-    	String tableName = args[2];
+		String fileName = args[0];
+    	String tableName = args[1];
     	
 		addDataToTableFromJSON(fileName,tableName);
 		findDocswithoutCondition(tableName);
