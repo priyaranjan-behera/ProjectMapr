@@ -98,31 +98,17 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 			
 			for (String city:cities)
 			{				
-				Get g = new Get(Bytes.toBytes(city));
-				System.out.println("Adding to count database, city: " + city);
-
-				if(!stat_table.exists(g))
-				{
-					Put p = new Put(Bytes.toBytes(city));
-					p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(1));
-					stat_table.put(p);
-					p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
-					stat_table.put(p);
-				}
-				else
-				{
+				
 					count = findNumDocswithPin(tableName, city);
 					System.out.println("Count found: " + count);
 					
-			        if(count > 1)
-			        {
-			        	Put p = new Put(Bytes.toBytes(city));
-						p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
-						stat_table.put(p);
-						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
-						stat_table.put(p);
-			        }
-				}
+			   
+		        	Put p = new Put(Bytes.toBytes(city));
+					p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
+					stat_table.put(p);
+					p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
+					stat_table.put(p);
+
 				
 			}
 

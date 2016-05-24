@@ -193,18 +193,8 @@ public class MapRDBTabularClient {
 				for(String city:cities)
 				{
 					System.out.println("Checking count for: " + city);
-					Get g = new Get(Bytes.toBytes(city));
 					Put p = new Put(Bytes.toBytes(city));
-					if(!stat_table.exists(g))
-					{
-						p = new Put(Bytes.toBytes(city));
-						p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(1));
-						stat_table.put(p);
-						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
-						stat_table.put(p);
-					}
-					else
-					{
+					
 						SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Identification"), Bytes.toBytes("city"), CompareOp.EQUAL, Bytes.toBytes(city));
 						System.out.println("New Filter is created here.");
 						Scan s = new Scan();
@@ -218,15 +208,14 @@ public class MapRDBTabularClient {
 				        	count++;
 				        }
 				        System.out.println("Inserting " + city + " Found Count: " + count);
-				        if(count > 1)
-				        {
-				        	p = new Put(Bytes.toBytes(city));
-							p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
-							stat_table.put(p);
-							p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
-							stat_table.put(p);
-				        }
-					}
+
+			        	p = new Put(Bytes.toBytes(city));
+						p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
+						stat_table.put(p);
+						p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
+						stat_table.put(p);
+
+
 				}
 				
 				
