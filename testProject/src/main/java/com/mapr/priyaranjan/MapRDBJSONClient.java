@@ -92,6 +92,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 					count = 1;
 					tmpDoc = MapRDB.newDocument().setId(row.getString("city")).set("zips",Lists.newArrayList(zipSet)).set("count", count);
 					zipTable.insertOrReplace(tmpDoc);
+					System.out.println("Inserting Count 1 for "+row.getString("city"));
 				}
 				else
 				{
@@ -100,7 +101,7 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 					count  = zipSet.size();
 					tmpDoc = MapRDB.newDocument().setId(row.getString("city")).set("zips",Lists.newArrayList(zipSet)).set("count", count);
 					zipTable.insertOrReplace(tmpDoc);
-
+					System.out.println("Inserting Count " + count + " for "+row.getString("city"));
 				}
 
 			}
