@@ -1,6 +1,7 @@
 package com.mapr.priyaranjan;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,8 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.mapr.db.MapRDB;
 import com.mapr.db.Table;
 
@@ -33,37 +36,19 @@ public class MapRDBJSONClient {
 
 
 	private static Table getDocTableforZipJSON(String tablePath) {
-		if ( ! MapRDB.tableExists(tablePath)) {
-
-			try{
-
-				// Reads the configurations from the conf folder as mentioned in the classpath. 
-				Configuration config = HBaseConfiguration.create();
-
-				// Lets create a HBaseAdmin here from the config
-				HBaseAdmin admin = new HBaseAdmin(config);
-
-				if(admin.tableExists(tablePath+"_PinCount"))
-				{
-					System.out.println("Table already exists!");
-				}
-				else
-				{
-					HTableDescriptor table = new HTableDescriptor(Bytes.toBytes(tablePath+"_PinCount"));
-					HColumnDescriptor family = new HColumnDescriptor(Bytes.toBytes("Data"));
-					table.addFamily(family);
-					admin.createTable(table);
-				}
-			}catch(Exception e)
-			{
-				System.out.println("Error while creating stats table: " + e.getMessage());
-				e.printStackTrace();
-			}
-
-
-			return MapRDB.createTable(tablePath);
+			if ( ! MapRDB.tableExists(tablePath)) {
+				return MapRDB.createTable(tablePath);
+		} else {
+			return MapRDB.getTable(tablePath);
+		}
+	}
+	
+	
+	private static Table getZipDocTableforZipJSON(String tablePath) {
+		if ( ! MapRDB.tableExists(tablePath + "_zips")) {
+			return MapRDB.createTable(tablePath + "_zips");
 	} else {
-		return MapRDB.getTable(tablePath);
+		return MapRDB.getTable(tablePath + "_zips");
 	}
 }
 
@@ -76,6 +61,8 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 	//From the configuration we create a connection to the cluster. 
 	try {
 		Table table = getDocTableforZipJSON(tableName);
+		Table zipTable = getZipDocTableforZipJSON(tableName);
+		
 		List<Document> data = MapRJSONProcessing.getJSONDocsFromFile(fileName);
 		
 		Configuration config = HBaseConfiguration.create();
@@ -90,27 +77,34 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 			{
 				System.out.println("Adding to database, row: " + i++ + " city: " + row.getString("city"));
 				table.insertOrReplace(row);
-
-
 				cities.add(row.getString("city"));
+				
+				//Section to update the zip table
+				
+				Document tmpDoc;
+				
+				tmpDoc = zipTable.findById(row.getString("city"));
+				Set<Object> zipSet;
+				if(tmpDoc ==  null)
+				{
+					zipSet = new HashSet<Object>();
+					zipSet.add(row.getString("_id"));
+					count = 1;
+					tmpDoc = MapRDB.newDocument().setId(row.getString("city")).set("zips",Lists.newArrayList(zipSet)).set("count", count);
+					zipTable.insertOrReplace(tmpDoc);
+				}
+				else
+				{
+					zipSet = new HashSet<Object>(tmpDoc.getList("zips"));
+					zipSet.add(row.getString("_id"));
+					count  = zipSet.size();
+					tmpDoc = MapRDB.newDocument().setId(row.getString("city")).set("zips",Lists.newArrayList(zipSet)).set("count", count);
+					zipTable.insertOrReplace(tmpDoc);
+
+				}
 
 			}
 			
-			for (String city:cities)
-			{				
-				
-					count = findNumDocswithPin(tableName, city);
-					System.out.println("Count found: " + count + "for City: " + city);
-					
-			   
-		        	Put p = new Put(Bytes.toBytes(city));
-					p.add(Bytes.toBytes("Data"), Bytes.toBytes("pin"),Bytes.toBytes(count));
-					stat_table.put(p);
-					p.add(Bytes.toBytes("Data"), Bytes.toBytes("city"),Bytes.toBytes(city));
-					stat_table.put(p);
-
-				
-			}
 
 		} catch (Exception e)
 		{
@@ -287,7 +281,7 @@ public static void main(String[] args) throws IOException {
 		String fileName = args[0];
     	String tableName = args[1];
     	
-		//addDataToTableFromJSON(fileName,tableName);
+		addDataToTableFromJSON(fileName,tableName);
 		findDocswithoutCondition(tableName);
 		System.out.println("Completed reading data from the table");
 
