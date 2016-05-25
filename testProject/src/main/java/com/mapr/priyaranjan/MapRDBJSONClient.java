@@ -65,11 +65,6 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 		
 		List<Document> data = MapRJSONProcessing.getJSONDocsFromFile(fileName);
 		
-		Configuration config = HBaseConfiguration.create();
-		Connection connection = ConnectionFactory.createConnection(config);
-
-		org.apache.hadoop.hbase.client.Table stat_table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
-		
 		Set<String> cities = new HashSet<String>();
 
 		try {
@@ -112,8 +107,6 @@ public static void addDataToTableFromJSON(String fileName, String tableName)
 			System.out.println("Error while writing to table: " + e.getMessage());
 			e.printStackTrace();
 		}finally {
-			stat_table.close();
-			connection.close();
 		}
 
 	} catch (Exception e) {
@@ -141,6 +134,14 @@ public static QueryCondition buildQueryCondition() {
 	return MapRDB.newCondition()
 			.and()
 			.is("city", Op.EQUAL, "SAN JOSE")
+			.close()
+			.build();
+}
+
+public static QueryCondition buildMultiplePinQueryCondition() {
+	return MapRDB.newCondition()
+			.and()
+			.is("count", Op.GREATER, 1)
 			.close()
 			.build();
 }
@@ -200,72 +201,22 @@ public static QueryCondition buildQueryConditionMultiplePins(String city) {
 
 
 
-public static int findNumDocswithPin(String tablePath, String city)
-{
-	int count = 0;
-	try{
-		Table table = MapRDB.getTable(tablePath);
-		DocumentStream documentStream = table.find(buildQueryConditionMultiplePins(city));
-
-		for(Document document : documentStream) {
-			//System.out.println("Incrementing Count: " + count);
-			count++;
-		}
-	}catch(Exception e) {
-		System.out.println("Error getting documents from the table");
-		e.printStackTrace();
-	}
-
-	return count;
-}
-
-public static void getPinFilteredCityDataFromTable(String tableName)
+public static void getPinFilteredCityDataFromTable(String tablePath)
 {
 	// Reads the configurations from the conf folder as mentioned in the classpath. 
-    Configuration config = HBaseConfiguration.create();
     
     //From the configuration we create a connection to the cluster. 
     try {
-		Connection connection = ConnectionFactory.createConnection(config);
-		org.apache.hadoop.hbase.client.Table table = connection.getTable(TableName.valueOf(tableName+"_PinCount"));
-		
+
 		System.out.println("Invoking function to get pin filtered city.");
+		Table zipTable = MapRDB.getTable(tablePath+"_zips");
+		DocumentStream documentStream = zipTable.find(buildMultiplePinQueryCondition());
+
+		for(Document document : documentStream) {
+			System.out.println("City with multiple Zips: " + document.getIdString());
+		}
 		
-		SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes("Data"), Bytes.toBytes("pin"), CompareOp.GREATER_OR_EQUAL, Bytes.toBytes(2));
-		
-		try {
-			
-			Scan s = new Scan();
-	        s.addColumn(Bytes.toBytes("Data"), Bytes.toBytes("pin"));
-	        s.addColumn(Bytes.toBytes("Data"), Bytes.toBytes("city"));
-	        s.setFilter(filter);
-	        ResultScanner scanner = table.getScanner(s);
-	        
-	        try {
-	            // Scanners return Result instances.
-	            for (Result rr : scanner) {
-	            	
-	            	byte[] value1 = rr.getValue(Bytes.toBytes("Data"),
-					          Bytes.toBytes("city"));
-	            	System.out.println("City with multiple zips: " + Bytes.toString(value1));
-	            	
-	            }
-	          } finally {
-	            // Make sure you close your scanners when you are done!
-	            // Thats why we have it inside a try/finally clause
-	            scanner.close();
-	          }
-			
-			
-		} catch (Exception e)
-		{
-			System.out.println("Error while reading from table: " + e.getMessage());
-			e.printStackTrace();
-		}finally {
-			connection.close();
-	    }
-		
-	} catch (IOException e) {
+	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		System.out.println("Couldn't connect to the cluster: " + e.getMessage());
 		e.printStackTrace();
