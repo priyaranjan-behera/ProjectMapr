@@ -215,10 +215,11 @@ public static void main(String[] args) throws IOException {
 		String fileName = args[0];
     	String tableName = args[1];
     	
-		addDataToTableFromJSON(fileName,tableName);
+		//addDataToTableFromJSON(fileName,tableName);
 		findDocswithoutCondition(tableName);
 		System.out.println("Completed reading data from the table");
 
+		System.out.println("Pins with population less than San Jose");
 		findDocswithCondition(tableName, buildSanJoseQueryCondition(tableName));
 		
 		System.out.println("Getting multiple zip cities:");
